@@ -22,9 +22,7 @@ if($status==false){
 }
 
 //4. 抽出データ数を取得
-$val = $stmt->fetch();         //1レコードだけ取得する方法
-//$count = $stmt->fetchColumn(); //SELECT COUNT(*)で使用可能()
-
+$val = $stmt->fetch();  //1レコードだけ取得する方法
 
 //5.該当１レコードがあればSESSIONに値を代入
 //入力したPasswordと暗号化されたPasswordを比較！[戻り値：true,false]
@@ -34,15 +32,21 @@ if($pw){
   $_SESSION["chk_ssid"]  = session_id();
   $_SESSION["kanri_flg"] = $val['kanri_flg'];
   $_SESSION["name"]      = $val['name'];
-  //Login成功時（select.phpへ）
+
+  // 管理者かどうかを判定してセッションに保存
+  if ($val['kanri_flg'] == 1) {  // 'kanri_flg'が1の場合を管理者とする
+      $_SESSION['is_admin'] = true;
+  } else {
+      $_SESSION['is_admin'] = false;
+  }
+
+  //Login成功時（index.phpへリダイレクト）
   redirect("index.php");
 
 }else{
-  //Login失敗時(login.phpへ)
+  //Login失敗時(login.phpへリダイレクト)
   redirect("login.php");
 
 }
 
 exit();
-
-
